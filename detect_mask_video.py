@@ -6,6 +6,7 @@ from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.preprocessing.image import img_to_array
 from tensorflow.keras.models import load_model
 from imutils.video import VideoStream
+from playsound import playsound
 import numpy as np
 import argparse
 import imutils
@@ -101,6 +102,9 @@ maskNet = load_model(args["model"])
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
+last_label = ""
+mask_detected_audio = "./audio/mask_detected.mp3"
+please_wear_mask_audio = "./audio/please_wear_mask.mp3"
 
 # loop over the frames from the video stream
 while True:
@@ -123,6 +127,13 @@ while True:
 		# determine the class label and color we'll use to draw
 		# the bounding box and text
 		label = "Mask" if mask > withoutMask else "No Mask"
+		if label != last_label:
+			last_label = label
+			if label == "Mask":
+				playsound(mask_detected_audio)
+			else:
+				playsound(please_wear_mask_audio)
+		
 		color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 
 		# include the probability in the label
