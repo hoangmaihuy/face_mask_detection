@@ -1,4 +1,4 @@
 numpy
 tensorflow
 imutils
-python-opencv
+opencv-python
