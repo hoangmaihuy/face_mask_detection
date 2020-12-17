@@ -13,6 +13,7 @@ import imutils
 import time
 import cv2
 import os
+from datetime import datetime
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
 	# grab the dimensions of the frame and then construct a blob
@@ -102,9 +103,15 @@ maskNet = load_model(args["model"])
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 time.sleep(2.0)
+
+# initialize const
 last_label = ""
 mask_detected_audio = "./audio/mask_detected.mp3"
 please_wear_mask_audio = "./audio/please_wear_mask.mp3"
+capture_dir = "./capture"
+
+if not os.path.exists(capture_dir):
+	os.mkdir(capture_dir)
 
 # loop over the frames from the video stream
 while True:
@@ -133,6 +140,10 @@ while True:
 				playsound(mask_detected_audio)
 			else:
 				playsound(please_wear_mask_audio)
+				# capture face
+				capture_name = "capture_" + datetime.now().strftime('%Y%m%d_%H%M%S') + '.jpg'
+				cv2.imwrite(os.path.join(capture_dir, capture_name), frame)
+
 		
 		color = (0, 255, 0) if label == "Mask" else (0, 0, 255)
 
